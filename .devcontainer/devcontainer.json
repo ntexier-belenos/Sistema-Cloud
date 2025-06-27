@@ -1,0 +1,46 @@
+{
+    "name": "Sistema-Cloud Dev Environment",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "python.defaultInterpreterPath": "/usr/bin/python3",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.formatting.provider": "black",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": "explicit"
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-azuretools.vscode-docker",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "redhat.vscode-yaml",
+                "eamodio.gitlens",
+                "github.vscode-pull-request-github",
+                "ms-vsliveshare.vsliveshare"
+            ]
+        }
+    },
+    "forwardPorts": [
+        8000,
+        3000,
+        5432
+    ],    "postCreateCommand": "cd /workspace/backend && pip install --break-system-packages -r requirements.txt && cd /workspace/frontend && npm install",
+    "postStartCommand": "sudo chmod 666 /var/run/docker.sock && bash .devcontainer/launch_db.sh",
+    "remoteUser": "node",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    "runArgs": ["--privileged"]
+}

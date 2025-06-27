@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "start-backend",
+      "type": "shell",
+      "command": "cd /workspace/backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^INFO:.*Started server process.*$",
+            "endsPattern": "^INFO:.*Application startup complete.*$"
+          }
+        }
+      ]
+    },
+    {
+      "label": "start-frontend",
+      "type": "shell",
+      "command": "cd /workspace/frontend && npm install && npm start",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^Starting the development server",
+            "endsPattern": "^Compiled successfully|^Failed to compile"
+          }
+        }
+      ]
+    },
+    {
+      "label": "start-dev",
+      "dependsOn": [
+        "start-backend",
+        "start-frontend"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

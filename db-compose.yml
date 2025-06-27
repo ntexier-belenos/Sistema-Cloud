@@ -1,0 +1,14 @@
+services:
+  database:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: sistema
+      POSTGRES_PASSWORD: sistema
+      POSTGRES_DB: sistema_cloud
+    ports:
+      - "5432:5432"
+    volumes:
+      - sistema_pgdata:/var/lib/postgresql/data
+
+volumes:
+  sistema_pgdata:

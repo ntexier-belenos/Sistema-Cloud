@@ -1,0 +1,36 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://sistema:sistema@database:5432/sistema_cloud
+    depends_on:
+      - database
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: sistema
+      POSTGRES_PASSWORD: sistema
+      POSTGRES_DB: sistema_cloud
+    volumes:
+      - sistema_db_data:/var/lib/postgresql/data
+
+volumes:
+  sistema_db_data:
