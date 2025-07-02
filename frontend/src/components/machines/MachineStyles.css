@@ -1,0 +1,50 @@
+.machine-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.machine-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.status-operational {
+  color: #4caf50;
+}
+
+.status-maintenance {
+  color: #ff9800;
+}
+
+.status-offline {
+  color: #f44336;
+}
+
+/* Animation pour les statistiques */
+@keyframes growBar {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.stat-bar {
+  animation: growBar 1s ease-out;
+}
+
+/* Styles pour l'impression (QR code) */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .machine-detail-print {
+    padding: 20px;
+  }
+  
+  .machine-qr-code {
+    text-align: center;
+    margin: 20px 0;
+  }
+}

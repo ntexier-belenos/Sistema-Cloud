@@ -2,29 +2,7 @@
 
 ## 🛠️ Development Environment Setup
 
-### Backend
-
-1. Navigate to the `backend` directory.
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the development server:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-### Frontend
-
-1. Navigate to the `frontend` directory.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm start
-   ```
+Backend and Frontend servers are started when opening the workspace. **Do not start them later after modifications**
 
 ### Database
 

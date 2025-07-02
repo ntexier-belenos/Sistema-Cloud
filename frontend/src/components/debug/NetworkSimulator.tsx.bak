@@ -1,0 +1,290 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  But  const handleErrorProbabilityChange = (_event: Event, newValue: number | number[]) => {
+    setConfig((prev: NetworkSimulatorConfig) => ({
+      ...prev,
+      errors: {
+        ...prev.errors,
+        probability: newValue as number / 100
+      }
+    }));
+  };rd,
+  CardContent,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Slider,
+  Switch,
+  Typography
+} from '@mui/material';
+import { 
+  configureNetworkSimulator, 
+  getNetworkSimulatorConfig, 
+  NetworkSimulatorConfig, 
+  toggleNetworkSimulation 
+} from '../../services/networkSimulator';
+
+/**
+ * Composant pour configurer le simulateur de réseau
+ * Ce composant permet aux développeurs de simuler différentes conditions réseau
+ * pour tester la robustesse de l'application.
+ */
+const NetworkSimulator: React.FC = () => {
+  const [config, setConfig] = useState<NetworkSimulatorConfig>(getNetworkSimulatorConfig());
+  
+  // Mettre à jour la configuration locale quand elle change
+  useEffect(() => {
+    configureNetworkSimulator(config);
+  }, [config]);
+  
+  const handleToggleSimulation = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newEnabled = event.target.checked;
+    setConfig((prev: NetworkSimulatorConfig) => ({ ...prev, enabled: newEnabled }));
+    toggleNetworkSimulation(newEnabled);
+  };
+  
+  const handleLatencyToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfig((prev: NetworkSimulatorConfig) => ({
+      ...prev,
+      latency: {
+        ...prev.latency,
+        enabled: event.target.checked
+      }
+    }));
+  };
+  
+  const handleLatencyChange = (_event: Event, newValue: number | number[]) => {
+    const [min, max] = newValue as number[];
+    setConfig((prev: NetworkSimulatorConfig) => ({
+      ...prev,
+      latency: {
+        ...prev.latency,
+        minMs: min,
+        maxMs: max
+      }
+    }));
+  };
+  
+  const handleErrorsToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfig((prev: NetworkSimulatorConfig) => ({
+      ...prev,
+      errors: {
+        ...prev.errors,
+        enabled: event.target.checked
+      }
+    }));
+  };
+  
+  const handleErrorProbabilityChange = (_event: Event, newValue: number | number[]) => {
+    setConfig(prev => ({
+      ...prev,
+      errors: {
+        ...prev.errors,
+        probability: newValue as number
+      }
+    }));
+  };
+  
+  const handleTimeoutToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfig(prev => ({
+      ...prev,
+      timeout: {
+        ...prev.timeout,
+        enabled: event.target.checked
+      }
+    }));
+  };
+  
+  const handleTimeoutProbabilityChange = (_event: Event, newValue: number | number[]) => {
+    setConfig(prev => ({
+      ...prev,
+      timeout: {
+        ...prev.timeout,
+        probability: newValue as number
+      }
+    }));
+  };
+  
+  const handleTimeoutDurationChange = (_event: Event, newValue: number | number[]) => {
+    setConfig(prev => ({
+      ...prev,
+      timeout: {
+        ...prev.timeout,
+        timeoutMs: newValue as number
+      }
+    }));
+  };
+  
+  const resetConfig = () => {
+    setConfig({
+      enabled: false,
+      latency: {
+        enabled: false,
+        minMs: 300,
+        maxMs: 1500
+      },
+      errors: {
+        enabled: false,
+        probability: 0.2
+      },
+      timeout: {
+        enabled: false,
+        probability: 0.1,
+        timeoutMs: 5000
+      }
+    });
+  };
+  
+  return (
+    <Card variant="outlined" sx={{ mb: 3 }}>
+      <CardContent>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Typography variant="h6" component="div">
+            Network Simulator
+          </Typography>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={config.enabled}
+                onChange={handleToggleSimulation}
+                color="primary"
+              />
+            }
+            label={config.enabled ? "Enabled" : "Disabled"}
+          />
+        </Box>
+        
+        <Divider sx={{ my: 2 }} />
+        
+        <Typography variant="subtitle1" gutterBottom>
+          Latency Simulation
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={config.latency.enabled}
+                onChange={handleLatencyToggle}
+                disabled={!config.enabled}
+              />
+            }
+            label="Simulate latency"
+          />
+          
+          <Box px={2}>
+            <Typography id="latency-slider" gutterBottom>
+              Latency range: {config.latency.minMs}ms - {config.latency.maxMs}ms
+            </Typography>
+            <Slider
+              value={[config.latency.minMs, config.latency.maxMs]}
+              onChange={handleLatencyChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="latency-slider"
+              min={0}
+              max={5000}
+              step={100}
+              disabled={!config.enabled || !config.latency.enabled}
+            />
+          </Box>
+        </FormGroup>
+        
+        <Divider sx={{ my: 2 }} />
+        
+        <Typography variant="subtitle1" gutterBottom>
+          Error Simulation
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={config.errors.enabled}
+                onChange={handleErrorsToggle}
+                disabled={!config.enabled}
+              />
+            }
+            label="Simulate errors"
+          />
+          
+          <Box px={2}>
+            <Typography id="error-slider" gutterBottom>
+              Error probability: {Math.round(config.errors.probability * 100)}%
+            </Typography>
+            <Slider
+              value={config.errors.probability}
+              onChange={handleErrorProbabilityChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="error-slider"
+              min={0}
+              max={1}
+              step={0.05}
+              disabled={!config.enabled || !config.errors.enabled}
+            />
+          </Box>
+        </FormGroup>
+        
+        <Divider sx={{ my: 2 }} />
+        
+        <Typography variant="subtitle1" gutterBottom>
+          Timeout Simulation
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={config.timeout.enabled}
+                onChange={handleTimeoutToggle}
+                disabled={!config.enabled}
+              />
+            }
+            label="Simulate timeouts"
+          />
+          
+          <Box px={2}>
+            <Typography id="timeout-prob-slider" gutterBottom>
+              Timeout probability: {Math.round(config.timeout.probability * 100)}%
+            </Typography>
+            <Slider
+              value={config.timeout.probability}
+              onChange={handleTimeoutProbabilityChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="timeout-prob-slider"
+              min={0}
+              max={1}
+              step={0.05}
+              disabled={!config.enabled || !config.timeout.enabled}
+            />
+            
+            <Typography id="timeout-duration-slider" gutterBottom>
+              Timeout duration: {config.timeout.timeoutMs}ms
+            </Typography>
+            <Slider
+              value={config.timeout.timeoutMs}
+              onChange={handleTimeoutDurationChange}
+              valueLabelDisplay="auto"
+              aria-labelledby="timeout-duration-slider"
+              min={1000}
+              max={10000}
+              step={500}
+              disabled={!config.enabled || !config.timeout.enabled}
+            />
+          </Box>
+        </FormGroup>
+        
+        <Box mt={2} display="flex" justifyContent="flex-end">
+          <Button 
+            variant="outlined" 
+            color="secondary"
+            onClick={resetConfig}
+          >
+            Reset to Defaults
+          </Button>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default NetworkSimulator;
